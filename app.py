@@ -12,6 +12,12 @@ import os
 import base64
 from agents.openai_agent import PandasAgentOpenAI
 
+import logging
+
+# Configure logging
+logging.basicConfig(filename='logs/csv_agent.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+
 
 
 load_dotenv()
@@ -49,7 +55,7 @@ for message in st.session_state.messages:
         if "dict" in content:
             st.markdown(content["dict"])
         if "pandas_series" in content:
-            st.markdown(content["pandas_series"])
+            st.dataframe(content["pandas_series"])
         if "printed_output" in content:
             st.markdown(content["printed_output"])
         if "error" in content:
@@ -78,6 +84,7 @@ if prompt := st.chat_input("Enter your question"):
 if prompt:
     reply = csv_agent.run_agent(prompt)
     python_code = csv_agent.current_code
+    logging.info(f"query: {prompt}; python_code_generated: {python_code}")
     #time.sleep(2)
     #print(reply)
     if "result_value" in reply:
